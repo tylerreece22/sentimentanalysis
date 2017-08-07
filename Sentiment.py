@@ -83,8 +83,10 @@ def preprocess(tweet):
 def extract_features(tweet):
     tweet_words = set(tweet)
     features = {}
+    print featureList
     for word in featureList:
         features['contains(%s)' % word] = (word in tweet_words)
+    print features
     return features
 #end
 
@@ -93,25 +95,48 @@ featureList = []
 tweets = []
 
 with open('positive_words.txt', 'r') as positiveFile:
-    sentiment = 'positive'
-    featureVector = positiveFile.read().split(',')
-    featureList.extend(featureVector)
-    tweets.append((featureVector, sentiment));
+    positiveSentiment = 'positive'
+    #positiveFeatureVector = positiveFile.read().split(',')
+    positiveWords = 'good,nice,cool,yummy'
+    positiveFeatureVector = positiveWords.split(',')
+    featureList.extend(positiveFeatureVector)
+    tweets.append((positiveFeatureVector, positiveSentiment));
 
 with open('negative_words.txt', 'r') as negativeFile:
-    sentiment = 'negative'
-    featureVector = negativeFile.read().split(',')
-    featureList.extend(featureVector)
-    tweets.append((featureVector, sentiment));
-         
+    neutralSentiment = 'neutral'
+    #negativeFeatureVector = negativeFile.read().split(',')
+    neutralWords = 'okay,sure,wtf'
+    neutralFeatureVector = neutralWords.split(',')
+    featureList.extend(neutralFeatureVector)
+    tweets.append((neutralFeatureVector, neutralSentiment));
+
+with open('negative_words.txt', 'r') as negativeFile:
+    negativeSentiment = 'negative'
+    #negativeFeatureVector = negativeFile.read().split(',')
+    negativeWords = 'bad,mean,nasty'
+    negativeFeatureVector = negativeWords.split(',')
+    featureList.extend(negativeFeatureVector)
+    tweets.append((negativeFeatureVector, negativeSentiment));
+
+print tweets     
 # Extract feature vector for all tweets in one shot
-training_set = nltk.classify.util.apply_features(extract_features, tweets, True)
+training_set = nltk.classify.util.apply_features(extract_features, tweets)
 
 # Train the classifier
 NBClassifier = nltk.NaiveBayesClassifier.train(training_set)
 
 # Test the classifier
-testTweet = 'i am suicidal'
+testTweet = 'good nice cool happy'
 processedTestTweet = preprocess(testTweet) 
+
+#print processedTestTweet
+#print extract_features(getFeatureVector(processedTestTweet))
+
 #print extract_features(getFeatureVector(testTweet))  
-print NBClassifier.classify(extract_features(getFeatureVector(processedTestTweet)))
+print NBClassifier.classify(extract_features(processedTestTweet))
+#print 'Features'
+#print features
+#print 'feature list' 
+#3print featureList
+#print 'tweets'
+#print tweets
