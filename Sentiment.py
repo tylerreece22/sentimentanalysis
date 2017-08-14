@@ -195,7 +195,6 @@ class MyListener(StreamListener):
                 else:
                     user = 'none'
                 
-                0pP1SpJqHIOG282pOFtLySVSVA8OReqM0Aqj4nZPLOvAH
                 self.saveFile.write(tweetSentiment)
                 self.saveFile.write('|')
                 self.saveFile.write(str(idStr).encode("utf-8"))
