@@ -88,10 +88,9 @@ def extract_features(tweet):
 featureList = []
 tweets = []
 
-print ('Training classfier.....')
-print str(datetime.now())
+print ('Training classfier.....'), str(datetime.now())
 
-inpTweets = csv.reader(open('2kTestSet.csv', 'rU'), delimiter=',', quotechar='|')
+inpTweets = csv.reader(open('10kTestSet.csv', 'rU'), delimiter=',', quotechar='|')
 
 for row in inpTweets:
     sentiment = row[0];
@@ -102,20 +101,19 @@ for row in inpTweets:
     tweets.append((featureVector, sentiment));
 
 # Extract feature vector for all tweets in one shot
-training_set = nltk.classify.util.apply_features(extract_features, tweets)
+#training_set = nltk.classify.util.apply_features(extract_features, tweets)
 # Train the classifier
-NBClassifier = nltk.NaiveBayesClassifier.train(training_set)
-#f = open('my_classifier_20k.pickle', 'wb')
+#NBClassifier = nltk.NaiveBayesClassifier.train(training_set)
+#f = open('my_classifier_10k.pickle', 'wb')
 #pickle.dump(NBClassifier, f)
 #f.close()
 
 #print ('classifier stored as my_classifier.pickle')
-#f = open('my_classifier_10k.pickle', 'rb')
-#NBClassifier = pickle.load(f)
-#f.close()
+f = open('my_classifier_10k.pickle', 'rb')
+NBClassifier = pickle.load(f)
+f.close()
 
-print ('Classifier loaded. Now classifying tweets.')
-print str(datetime.now())
+print 'Classifier loaded. Now classifying tweets.',str(datetime.now())
 
 #Twitter streaming start ------------------------------------------------------------------------
 # attempt authentication
@@ -146,7 +144,7 @@ class MyListener(StreamListener):
                 if 'text' in tweet:
                     processedTweet = processTweet(tweet['text']) 
                     tweetSentiment = NBClassifier.classify(extract_features(getFeatureVector(processedTweet)))
-                    print tweetSentiment
+                    print tweetSentiment,',', processedTweet
                 else:
                     processedTweet = 'no tweet'
                     tweetSentiment = 'none'
@@ -195,6 +193,7 @@ class MyListener(StreamListener):
                 else:
                     user = 'none'
                 
+                
                 self.saveFile.write(tweetSentiment)
                 self.saveFile.write('|')
                 self.saveFile.write(str(idStr).encode("utf-8"))
@@ -234,11 +233,10 @@ class MyListener(StreamListener):
  
  #change these to stream whatever filter you want
 twitter_stream = Stream(auth, MyListener())
-twitter_stream.filter(track=['#zeke' , '#zekeelliott', '#EzekielElliott', '#cowboys', '#NFL', '#dallascowboys', '#football'])
+twitter_stream.filter(track=['#GoodThingsForLife'])
 
 #Twitter streaming end ------------------------------------------------------------------------
             
-print 'Sentiment complete'
-print str(datetime.now())
+print 'Sentiment complete...',str(datetime.now())
 #print extract_features(getFeatureVector(testTweet))  
 #print NBClassifier.classify(extract_features(getFeatureVector(processedTestTweet)))
